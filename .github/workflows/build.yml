@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: '15'
       - name: Install depenecies.
-        run: yarn & cd ./src && dotnet restore
+        run: yarn && cd ./src && dotnet restore
       - name: Build project.
         run: yarn build
       - name: Deploy to Netlify
