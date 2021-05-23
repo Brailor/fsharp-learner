@@ -3,12 +3,14 @@ module App
 
 open Elmish
 open Elmish.React
+open Elmish.Navigation
+open Elmish.UrlParser
 open Fable.React.Props
 open Fable.React.Helpers
 open Fable.React.Standard
 open Fable.SimpleHttp
 
-
+type Route = Counter | Users
 type User = 
     {
         id : string
@@ -21,7 +23,8 @@ type Model =
     { 
         x : int
         users : string option
-        errors : string 
+        errors : string
+        route : Route 
     }
 
 type Service = 
@@ -46,6 +49,12 @@ let remote _ =
         return responseText
     }
 
+let route = 
+        oneOf 
+            [  UrlParser.map Counter (UrlParser.s "counter"); UrlParser.map Users (UrlParser.s "users")
+            ]
+
+
 let increment x = x + 1
 let decrement x = x - 1
 
@@ -54,6 +63,7 @@ let initModel =
         x = 0
         users = None
         errors = ""
+        route = Counter
     }, Cmd.ofMsg GetUsers
 
 let update msg model = 
@@ -70,14 +80,34 @@ let update msg model =
     | Error e ->
         { model with users = None; errors = e.ToString() }, Cmd.none
 
+let urlUpdate (result: Option<Route>) model = 
+    match result with
+    | Some page ->
+        { model with route = page }, []
+    | None -> 
+        { model with route = Counter }, []
+
+let counterView dispatch =
+     div [] [
+        a [ Href "#users"] [ str "Users" ]
+        button [ OnClick (fun _ -> dispatch Decrement) ] [ str "-" ];
+        button [ OnClick (fun _ -> dispatch Increment) ] [ str "+" ] ]
+
+let usersView model =
+     div [] [
+          a [ Href "#counter"] [ str "Counter" ]
+          str (sprintf "%A" model.users) ]
     
 let view model dispatch =
-     div []
-      [ button [ OnClick (fun _ -> dispatch Decrement) ] [ str "-" ]
-        button [ OnClick (fun _ -> dispatch Increment) ] [ str "+" ] 
-        div [] [ str (sprintf "%A" model) ] ]
+     div [] [
+        match model with
+            | { route = Counter } -> 
+                div [] [ counterView dispatch ]
+            | { route = Users } ->
+                div [] [ usersView model ] ]
 
 
 Program.mkProgram (fun _ -> initModel) update view
+|> Program.toNavigable (parseHash route) urlUpdate
 |> Program.withReactBatched "elmish-app"
 |> Program.run
