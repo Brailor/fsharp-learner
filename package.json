@@ -1,0 +1,21 @@
+{
+  "name": "fable-test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "fable-compiler": "^2.13.0",
+    "fable-loader": "^2.1.9",
+    "webpack": "^5",
+    "webpack-cli": "^4",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
