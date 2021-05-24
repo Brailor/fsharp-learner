@@ -2,6 +2,7 @@
 module App
 
 open Elmish
+open Elmish.Debug
 open Elmish.React
 open Elmish.Navigation
 open Elmish.UrlParser
@@ -28,7 +29,7 @@ type Model =
     }
 
 type Service = 
-    { getUsers : unit -> Async<string> }
+    { getUsers : unit -> Async<User> }
 
 type Msg =
     | Increment
@@ -51,8 +52,8 @@ let remote _ =
 
 let route = 
         oneOf 
-            [  UrlParser.map Counter (UrlParser.s "counter"); UrlParser.map Users (UrlParser.s "users")
-            ]
+            [  UrlParser.map Counter (UrlParser.s "counter");
+             UrlParser.map Users (UrlParser.s "users")]
 
 
 let increment x = x + 1
@@ -87,22 +88,23 @@ let urlUpdate (result: Option<Route>) model =
     | None -> 
         { model with route = Counter }, []
 
-let counterView dispatch =
+let counterView model dispatch =
      div [] [
-        a [ Href "#users"] [ str "Users" ]
-        button [ OnClick (fun _ -> dispatch Decrement) ] [ str "-" ];
+        div [] [ a [ Href "#users"] [ str "Users" ] ]
+        button [ OnClick (fun _ -> dispatch Decrement) ] [ str "-" ]
+        span [] [ str (model.x.ToString()) ]
         button [ OnClick (fun _ -> dispatch Increment) ] [ str "+" ] ]
 
 let usersView model =
      div [] [
-          a [ Href "#counter"] [ str "Counter" ]
+          div [] [ a [ Href "#counter"] [ str "Counter" ] ]
           str (sprintf "%A" model.users) ]
     
 let view model dispatch =
      div [] [
         match model with
             | { route = Counter } -> 
-                div [] [ counterView dispatch ]
+                div [] [ counterView model dispatch ]
             | { route = Users } ->
                 div [] [ usersView model ] ]
 
@@ -110,4 +112,5 @@ let view model dispatch =
 Program.mkProgram (fun _ -> initModel) update view
 |> Program.toNavigable (parseHash route) urlUpdate
 |> Program.withReactBatched "elmish-app"
+|> Program.withDebugger
 |> Program.run

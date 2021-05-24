@@ -15,6 +15,7 @@
     "fable-compiler": "^2.13.0",
     "fable-loader": "^2.1.9",
     "netlify-cli": "^3.30.4",
+    "remotedev": "^0.2.9",
     "webpack": "^5",
     "webpack-cli": "^4",
     "webpack-dev-server": "^3.11.2"
