@@ -6,7 +6,7 @@ var path = require('path');
 
 module.exports = {
   mode: 'production',
-  entry: './src/client/App.fsproj',
+  entry: './src/App.fsproj',
   output: {
     path: path.join(__dirname, './public'),
     filename: 'bundle.js',
