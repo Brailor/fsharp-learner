@@ -17,11 +17,11 @@ jobs:
         with:
           node-version: '15'
       - name: Install depenecies.
-        run: cd ./client && yarn && cd ./src && dotnet restore
+        run: yarn && cd ./src && dotnet restore
       - name: Build project.
         run: yarn build
       - name: Deploy Frontend to Netlify. 
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_ACCESS_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify deploy --alias dev --dir ./client/public
+        run: npx netlify deploy --alias dev --dir ./public
