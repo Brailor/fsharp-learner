@@ -41,7 +41,7 @@ type Msg =
 //TODO: investigate how to do this more elegantly
 let remote _ =
     async {
-        let! (statusCode, (responseText)) = Http.get "https://jsonplaceholder.typicode.com/users"
+        let! (statusCode, (responseText)) = Http.get "/weatherforcast"
 
         match statusCode with
                 | 200 -> printfn "Everything is fine => %s" responseText
