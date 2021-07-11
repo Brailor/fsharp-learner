@@ -1,13 +1,10 @@
 name: Workflow to build, test the project.
-on: [push, pull_request, workflow_dispatch]
+on: [push]
 
 jobs:
-  build-deploy-fe:
+  build:
     runs-on: ubuntu-latest
-    name: Build and Deploy Frontend.
-    defaults:
-      run:
-        working-directory: ./client
+    name: Build and Test packages.
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
@@ -17,4 +14,12 @@ jobs:
         with:
           node-version: '15'
       - name: Install depenecies.
-        run: yarn
+        run: make install-root-deps
+      - name: Build projects.
+        run: |
+          make bootstrap-be
+          make build-be
+          make bootstrap-fe
+          make build-fe
+      - name: Test projects.
+        run: echo "Testing..."
